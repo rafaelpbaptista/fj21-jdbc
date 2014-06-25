@@ -52,6 +52,7 @@ public class ContatoDAO {
 				contato.setNome(rs.getString("nome"));
 				contato.setEmail(rs.getString("email"));
 				contato.setEndereco(rs.getString("endereco"));
+
 				// montando a data através do Calendar
 				Calendar data = Calendar.getInstance();
 				if (rs.getDate("dataNascimento").equals(null)) {
@@ -60,6 +61,7 @@ public class ContatoDAO {
 					data.setTime(rs.getDate("dataNascimento"));
 				}
 				contato.setDataNascimento(data);
+
 				// adicionando o objeto à lista
 				contatos.add(contato);
 			}
@@ -70,6 +72,77 @@ public class ContatoDAO {
 			throw new RuntimeException(e);
 		}
 
+	}
+
+	public List<Contato> buscaPorNome(String nome) {
+		try {
+			List<Contato> contatos = new ArrayList<Contato>();
+			PreparedStatement stmt = this.connection
+					.prepareStatement("select * from contatos where nome like ?");
+
+			stmt.setString(1, "%" + nome + "%");
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				// criando o objeto Contato
+				Contato contato = new Contato();
+				contato.setNome(rs.getString("nome"));
+				contato.setEmail(rs.getString("email"));
+				contato.setEndereco(rs.getString("endereco"));
+
+				// montando a data através do Calendar
+				Calendar data = Calendar.getInstance();
+				if (rs.getDate("dataNascimento").equals(null)) {
+					data.set(0, 0, 0);
+				} else {
+					data.setTime(rs.getDate("dataNascimento"));
+				}
+				contato.setDataNascimento(data);
+
+				// adicionando o objeto à lista
+				contatos.add(contato);
+			}
+			rs.close();
+			stmt.close();
+			return contatos;
+		} catch (SQLException e) {
+			System.out.println("[ERRO] Falha na execucao da consulta! (NOME)");
+			throw new RuntimeException(e);
+		}
+	}
+
+	public Contato buscaPorId(Long id) {
+		try {
+			Contato contato = new Contato();
+			PreparedStatement stmt = this.connection
+					.prepareStatement("select * from contatos where id=?");
+
+			stmt.setLong(1, id);
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				// criando o objeto Contato
+				contato.setNome(rs.getString("nome"));
+				contato.setEmail(rs.getString("email"));
+				contato.setEndereco(rs.getString("endereco"));
+
+				// montando a data através do Calendar
+				Calendar data = Calendar.getInstance();
+				if (rs.getDate("dataNascimento").equals(null)) {
+					data.set(0, 0, 0);
+				} else {
+					data.setTime(rs.getDate("dataNascimento"));
+				}
+				contato.setDataNascimento(data);
+
+			}
+			rs.close();
+			stmt.close();
+			return contato;
+		} catch (SQLException e) {
+			System.out.println("[ERRO] Falha na execucao da consulta! (ID)");
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void altera(Contato contato) {
